@@ -3,6 +3,7 @@
 
 /* Настройка темы в синтаксисе Tailwind v4 */
 @theme {
+  --size-container: 1200px;
   /* Акцентные цвета */
   --color-accent-primary: #1e40af;
   --color-accent-secondary: #2563eb;
