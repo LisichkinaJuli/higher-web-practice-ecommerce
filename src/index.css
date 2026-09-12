@@ -1,5 +1,51 @@
-/* Minimal neutral base styles for the student template. */
+/* Подключаем Tailwind v4 */
+@import 'tailwindcss';
 
+/* Настройка темы в синтаксисе Tailwind v4 */
+@theme {
+  /* Акцентные цвета */
+  --color-accent-primary: #1e40af;
+  --color-accent-secondary: #2563eb;
+  --color-accent-success: #10b981;
+  --color-accent-danger: #ef4444;
+
+  /* Нейтральные цвета (Текст) */
+  --color-neutral-primary: #1f2937;
+  --color-neutral-secondary: #6b7280;
+  --color-neutral-disable: #9ca3af;
+
+  /* Фоновые цвета */
+  --color-bg-primary: #f9fafb;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-disable: #f3f4f6;
+  --color-bg-shadows: #e5e7eb;
+
+  /* Шрифты */
+  --font-heading: 'Roboto', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+}
+
+/* Вариант для темной темы в v4 */
+@custom-variant dark (&:is(.dark *));
+
+/* Настройка цветов для темной темы */
+@media dark {
+  :root {
+    --color-accent-primary: #3B82F6;
+    --color-accent-secondary: #60A5FA;
+    --color-accent-success: #34D399;
+    --color-accent-danger: #F87171;
+
+    --color-neutral-primary: #E5E7EB;
+    --color-neutral-secondary: #9CA3AF;
+    --color-neutral-disable: #6B7280;
+
+    --color-bg-primary: #111827;
+    --color-bg-secondary: #1F2937;
+    --color-bg-disable: #374151;
+    --color-bg-shadows: #1E2938;
+  }
+}
 *,
 *::before,
 *::after {
@@ -28,4 +74,3 @@ main h1 {
   font-size: 24px;
   line-height: 1.2;
 }
-
