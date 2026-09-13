@@ -1,36 +1,43 @@
-/**
- * Компонент верхней шапки сайта (БЭМ-блок 'header').
- * На мобильных экранах (md) автоматически скрывает логотип и действия пользователя,
- * расширяя поисковую строку на 100% ширины экрана.
- */
 import { Link } from "react-router-dom";
+import { Button } from "../ui/Button";
+import { Input } from "../ui/Input";
+import { Logo } from "../ui/Logo";
+
+/**
+ * Компонент верхней шапки сайта.
+ * Использует переиспользуемые компоненты из UI-кита (Input, Button).
+ * На мобильных экранах (md) скрывает элементы навигации, оптимизируя пространство.
+ */
 export function Header() {
   return (
-    <header className="header bg-bg-secondary border-b border-bg-shadows py-3 sticky top-0 z-50 transition-colors">
-      <div className="header__container max-w-container mx-auto px-4 flex items-center gap-4">
-        {/* Логотипа: скрыт на мобильных (max-md:hidden) */}
-        <Link
-          to="/"
-          className="header__logo text-2xl font-bold text-neutral-primary max-md:hidden"
+    <header className="header w-full bg-bg-secondary border-b border-bg-shadows py-3 sticky top-0 z-50 transition-colors">
+      <div className="header__container w-full max-w-300 mx-auto px-4 flex items-center justify-between gap-4">
+        {/* Элемент логотипа: скрыт на мобильных (max-md:hidden) */}
+        <Logo className="header__logo" />
+
+        {/* Кнопка открытия каталога из UI-кита */}
+        <Button
+          variant="primary"
+          size="md"
+          className="header__catalog-btn max-md:hidden"
         >
-          <span className="text-accent-primary">Q</span>uant
-        </Link>
-        {/* Кнопка открытия каталога: скрыта на мобильных (max-md:hidden) */}
-        <button className="header__catalog-btn max-md:hidden bg-accent-primary hover:bg-accent-secondary text-white font-medium py-2 px-5 rounded-md transition-colors cursor-pointer">
           Каталог
-        </button>
-        {/* Поисковая строки */} 
+        </Button>
+
+        {/* Элемент поисковой строки: используем компонент Input из нашего UI-кита */}
         <div className="header__search grow max-w-125 max-md:max-w-full relative">
-          <input
+          <Input
             type="text"
             placeholder="Искать"
-            className="header__search-input w-full py-2 pl-4 pr-10 border border-bg-shadows focus:border-accent-primary rounded-md outline-none bg-bg-primary text-neutral-primary transition-all text-sm placeholder:text-neutral-disable"
+            className="header__search-input"
           />
-          <button className="header__search-btn absolute right-3 top-1/2 -translate-y-1/2 text-neutral-secondary cursor-pointer hover:text-accent-primary transition-colors">
+          {/* Иконку лупы оставляем кнопкой-абсолютом поверх инпута */}
+          <button className="header__search-btn absolute right-3 top-1/2 -translate-y-1/2 text-neutral-secondary cursor-pointer hover:text-accent-primary transition-colors bg-transparent border-none outline-none">
             🔍
           </button>
         </div>
 
+        {/* Элемент блока авторизации и профиля: скрыт на мобильных */}
         <div className="header__user-actions flex items-center gap-5 max-md:hidden">
           <Link
             to="/profile"
@@ -39,9 +46,11 @@ export function Header() {
             <span className="text-lg">👤</span>
             <span>Профиль</span>
           </Link>
-          <button className="header__auth-btn bg-accent-primary hover:bg-accent-secondary text-white text-sm font-bold py-2 px-5 rounded-md transition-colors cursor-pointer">
+
+          {/* Кнопка регистрации */}
+          <Button variant="primary" size="md" className="header__auth-btn">
             Зарегистрироваться
-          </button>
+          </Button>
         </div>
       </div>
     </header>
