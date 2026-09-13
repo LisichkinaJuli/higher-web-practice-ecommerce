@@ -16,10 +16,10 @@ export function Header() {
         <Logo className="header__logo" />
 
         {/* Кнопка открытия каталога из UI-кита */}
-        <Button
-          variant="primary"
-          size="md"
-          className="header__catalog-btn max-md:hidden"
+        <Button 
+          variant="primary" 
+          size="md" 
+          className="header__catalog-btn max-md:hidden shrink-0"
         >
           Каталог
         </Button>
