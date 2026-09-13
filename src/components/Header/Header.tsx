@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Logo } from "../ui/Logo";
+import { SearchIcon } from '../ui/Icons';
 
 /**
  * Компонент верхней шапки сайта.
@@ -24,18 +25,14 @@ export function Header() {
           Каталог
         </Button>
 
-        {/* Элемент поисковой строки: используем компонент Input из нашего UI-кита */}
-        <div className="header__search grow max-w-125 max-md:max-w-full relative">
-          <Input
-            type="text"
-            placeholder="Искать"
-            className="header__search-input"
-          />
-          {/* Иконку лупы оставляем кнопкой-абсолютом поверх инпута */}
-          <button className="header__search-btn absolute right-3 top-1/2 -translate-y-1/2 text-neutral-secondary cursor-pointer hover:text-accent-primary transition-colors bg-transparent border-none outline-none">
-            🔍
-          </button>
-        </div>
+        {/* Поиск */}
+        <Input 
+          type="text" 
+          placeholder="Искать" 
+          className="header__search-input max-md:max-w-full" 
+          icon={<SearchIcon className="w-5 h-5" />} // Иконка примет правильный цвет из темы
+          onIconClick={() => console.log('Ищем усы...')}
+        />
 
         {/* Элемент блока авторизации и профиля: скрыт на мобильных */}
         <div className="header__user-actions flex items-center gap-5 max-md:hidden">
