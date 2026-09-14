@@ -1,66 +1,80 @@
-import { type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
 
+/**
+ * Интерфейс пропсов компонента Button.
+ * Расширяет стандартные атрибуты HTML-кнопки.
+ */
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Модификатор внешнего вида кнопок */
+  /** Вариант визуального оформления кнопки */
   variant?: 'primary' | 'secondary' | 'text';
-  /** Модификатор размера кнопки */
+  /** Модификатор размера, определяющий адаптивную шкалу высот */
   size?: 'md' | 'lg';
-  /** Флаг для квадратной кнопки-иконки (например, кнопки корзины в карточке товара) */
+  /** Флаг для создания равносторонней квадратной кнопки-иконки на основе паддингов */
   isIconOnly?: boolean;
-  /** Содержимое кнопки (текст, иконки) */
+  /** Флаг растягивания кнопки на 100% ширины родительского контейнера */
+  fullWidth?: boolean;
+  /** Состояние загрузки: блокирует интерактивность и отображает спиннер */
+  isLoading?: boolean;
+  /** Нативная ссылка на DOM-элемент кнопки по стандарту React 19 */
+  ref?: Ref<HTMLButtonElement>;
+  /** Дочерние элементы для рендеринга внутри кнопки */
   children: ReactNode;
 }
 
 /**
- * Универсальный компонент кнопки.
- * Поддерживает primary, secondary, text варианты, а также режим отображения только иконки.
+ * Переиспользуемый атомарный компонент кнопки дизайн-системы Quant.
+ * Соответствует спецификациям типографики Inter 700 Bold и адаптивным высотам Figma.
  */
 export function Button({
   variant = 'primary',
   size = 'md',
+  fullWidth = false,
   isIconOnly = false,
+  isLoading = false,
   className = '',
-  children,
   disabled,
+  type = 'button',
+  ref,
+  children,
   ...props
 }: ButtonProps) {
   
-  // Базовые структурные стили кнопки
-  const baseClasses = 'button inline-flex items-center justify-center font-medium rounded-md transition-all duration-200 outline-none focus:ring-2 focus:ring-accent-secondary/50 cursor-pointer disabled:cursor-not-allowed';
+  const baseClasses = 'button inline-flex items-center justify-center font-bold gap-2 rounded-md transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-accent-secondary/50 cursor-pointer disabled:cursor-not-allowed select-none shrink-0 text-sm leading-5 md:text-base md:leading-6';
   
-  // Стили для вариантов внешнего вида в строгом соответствии с HEX-палитрой макета
   const variantClasses = {
-    // Темно-синяя переходит в ярко-синюю на ховере. Disabled — серая.
-    primary: 'button_variant_primary bg-[#1e40af] hover:bg-[#2563eb] text-white disabled:bg-bg-disable disabled:text-neutral-disable disabled:border-transparent',
-    
-    // Контурная синяя кнопка, ховер — более яркая рамка и текст.
-    secondary: 'button_variant_secondary bg-bg-secondary border border-bg-shadows text-[#1e40af] hover:text-[#2563eb] hover:border-[#2563eb] disabled:bg-transparent disabled:text-neutral-disable disabled:border-bg-disable',
-    
-    // Текстовая кнопка без фонов и рамок из UI-кита
-    text: 'button_variant_text bg-transparent text-[#1e40af] hover:text-[#2563eb] p-0 disabled:text-neutral-disable disabled:bg-transparent'
+    primary: 'button_variant_primary bg-accent-primary hover:bg-accent-secondary text-white disabled:bg-bg-disable disabled:text-neutral-disable',
+    secondary: 'button_variant_secondary bg-white border border-accent-primary text-accent-primary hover:text-white hover:bg-accent-primary disabled:bg-transparent disabled:text-neutral-disable disabled:border-bg-disable',
+    text: 'button_variant_text bg-transparent text-accent-primary hover:text-accent-secondary p-0 disabled:text-neutral-disable'
   };
 
-  // Размеры кнопок: разделяем обычные прямоугольные и квадратные для иконок
   const sizeClasses = {
-    md: isIconOnly ? 'p-2 w-9 h-9' : 'text-sm py-2 px-5',
-    lg: isIconOnly ? 'p-3 w-12 h-12' : 'text-base py-3 px-8'
+    md: isIconOnly ? 'p-2 md:p-2.5' : 'py-2 px-4 md:py-2.5 md:px-5',
+    lg: isIconOnly ? 'p-3 md:p-3.5' : 'py-2.5 px-6 md:py-3 md:px-8'
   };
 
-  // Собираем классы воедино
   const computedClasses = [
     baseClasses,
     variantClasses[variant],
     sizeClasses[size],
+    fullWidth ? 'w-full' : '',
     className
-  ].join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <button
+      type={type}
+      ref={ref}
       className={computedClasses}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       {...props}
     >
-      {children}
+      {isLoading ? (
+        <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+      ) : (
+        children
+      )}
     </button>
   );
 }
