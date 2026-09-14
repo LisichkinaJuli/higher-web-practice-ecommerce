@@ -1,58 +1,91 @@
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
-
-export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
-  /** Текст подписи рядом с чекбоксом */
-  children?: ReactNode;
-}
+import { type InputHTMLAttributes, type ReactNode, type Ref, useId } from 'react';
 
 /**
- * Универсальный компонент чекбокса.
- * Полностью кастомизирует нативный инпут, сохраняя доступность и поддержку клавиатуры.
+ * Интерфейс пропсов компонента Checkbox.
+ * Расширяет стандартные HTML-атрибуты инпута, заменяя нативный onChange на контролируемый onCheckedChange.
  */
-export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ children, className = '', id, disabled, ...props }, ref) => {
-    
-    return (
-      // Обертка-контейнер
-      <label className={`checkbox inline-flex items-center gap-2.5 select-none cursor-pointer text-sm text-neutral-primary ${disabled ? 'checkbox_disabled cursor-not-allowed opacity-50' : ''}`}>
-        
-        {/* Скрытый нативный инпут, который слушает события и фокус */}
-        <input
-          id={id}
-          type="checkbox"
-          ref={ref}
-          disabled={disabled}
-          className="checkbox__input sr-only peer"
-          {...props}
-        />
+export type CheckboxProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'onChange'
+> & {
+  /** Текст подписи (лейбл), отображаемый справа от флажка */
+  children?: ReactNode;
+  /** Флаг состояния ошибки, активирующий предупреждающий красный контур */
+  isError?: boolean;
+  /** Кастомный обработчик изменения состояния, возвращающий актуальный статус boolean наружу */
+  onCheckedChange?: (checked: boolean) => void;
+  /** Нативная ссылка на DOM-элемент инпута по стандарту React 19 */
+  ref?: Ref<HTMLInputElement>;
+};
 
-        {/* Кастомный визуальный квадрат чекбокса */}
-        <div className={`checkbox__box w-5 h-5 flex items-center justify-center border border-bg-shadows rounded bg-bg-secondary text-transparent transition-all duration-200
-          peer-focus-visible:ring-2 peer-focus-visible:ring-accent-secondary/50
-          peer-checked:bg-accent-primary peer-checked:border-accent-primary peer-checked:text-white
-          peer-disabled:bg-bg-disable peer-disabled:border-bg-shadows
-          ${className}`}
-        >
-          {/* SVG-иконка галочки, которая становится видимой только при peer-checked */}
-          <svg
-            className="w-3.5 h-3.5 stroke-[3px]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
-        </div>
+/**
+ * Переиспользуемый атомарный компонент чекбокса дизайн-системы Quant.
+ * Интегрирует автогенерацию ID через useId, поддержку состояний peer и адаптивные размеры Figma.
+ */
+export function Checkbox({
+  children,
+  isError = false,
+  onCheckedChange,
+  id,
+  disabled,
+  checked,
+  className = '',
+  ref,
+  ...props
+}: CheckboxProps) {
+  const generatedId = useId();
+  const checkboxId = id ?? generatedId;
 
-        {/* Элемент текста подписи */}
-        {children && (
-          <span className="checkbox__text font-medium">
-            {children}
-          </span>
-        )}
-      </label>
-    );
-  }
-);
+  const borderClasses = isError
+    ? 'border-accent-danger peer-hover:border-accent-danger'
+    : checked
+      ? 'border-accent-primary'
+      : 'border-bg-shadows peer-hover:border-accent-primary';
 
-Checkbox.displayName = 'Checkbox';
+  const labelClasses = [
+    'checkbox inline-flex items-center gap-2.5 select-none font-normal w-full md:w-auto text-xs leading-4 md:text-sm md:leading-5',
+    disabled ? 'checkbox_disabled cursor-not-allowed opacity-40' : 'cursor-pointer'
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const boxClasses = [
+    'checkbox__box w-3.5 h-3.5 md:w-4 md:h-4 flex items-center justify-center border rounded-[2px] bg-white transition-all duration-150 shrink-0',
+    'peer-focus-visible:ring-2 peer-focus-visible:ring-accent-secondary/50',
+    'peer-disabled:bg-bg-disable peer-disabled:border-bg-shadows',
+    borderClasses,
+    className
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const markerClasses = [
+    'w-2 h-2 md:w-2.5 md:h-2.5 bg-accent-primary rounded-[1px] transition-transform duration-150 shadow-sm',
+    checked ? 'scale-100' : 'scale-0'
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  return (
+    <label htmlFor={checkboxId} className={labelClasses}>
+      <input
+        id={checkboxId}
+        type="checkbox"
+        ref={ref}
+        disabled={disabled}
+        checked={checked}
+        onChange={(e) => onCheckedChange?.(e.target.checked)}
+        className="checkbox__input sr-only peer"
+        {...props}
+      />
+      <div className={boxClasses}>
+        <div className={markerClasses} />
+      </div>
+      {children && (
+        <span className="checkbox__text text-neutral-primary peer-disabled:opacity-40">
+          {children}
+        </span>
+      )}
+    </label>
+  );
+}
