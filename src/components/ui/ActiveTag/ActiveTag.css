@@ -1,24 +1,26 @@
 /* ==========================================================================
    Компоненты Дизайн-системы (ui-kit): ActiveTag
    ========================================================================== */
-
 .active-tags-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-2);
+  margin-bottom: var(--spacing-2);
   width: 100%;
 }
 
 .active-tag {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 2px 12px;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-2);    
+  padding-bottom: var(--spacing-2); 
+  padding-left: var(--spacing-3);
+  padding-right: var(--spacing-3);
   border-radius: 20px;
   border: 1px solid var(--color-accent-primary); 
-  color: var(--color-accent-primary);   
+  color: var(--color-accent-primary); 
   background-color: transparent;
   font-family: var(--font-sans);
   font-size: var(--text-sm);
@@ -26,23 +28,32 @@
   user-select: none;
   cursor: pointer;
   transition: color 0.15s ease;
+
   & .active-tag__close-btn.btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 14px;
-    width: 14px;          
-    padding: 0;
-    background-color: transparent;
+    height: var(--spacing-3);
+    width: var(--spacing-3);
+    padding: 0 !important;
+    background-color: transparent; 
     background: transparent;
     border: none;
     border-radius: 0;
     line-height: 0;
     margin: 0;
     color: inherit;
-    box-shadow: none;
-    filter: none;   
-  
+    box-shadow: none;              
+    filter: none;
+    
+    & svg,
+    & .active-tag__close-icon {
+      display: block;
+      width: var(--spacing-3) !important;  
+      height: var(--spacing-3) !important; 
+      color: inherit;
+    }
+
     &:hover {
       background-color: transparent;
       background: transparent;
@@ -50,25 +61,11 @@
       filter: none;
     }
   }
-  & .active-tag__close-icon {
-    display: block;
-    width: 14px;        
-    height: 14px;       
-    color: inherit;
-    
-    & path {
-      stroke: currentColor;
-    }
-  }
 
   &:hover {
-    color: var(--color-accent-secondary);
+    color: var(--color-accent-secondary); 
     border-color: var(--color-accent-primary);
     background-color: transparent;
-    & .active-tag__close-btn.btn {
-      color: var(--color-accent-secondary);
-      box-shadow: none;
-      filter: none;
-    }
   }
 }
+

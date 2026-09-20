@@ -23,9 +23,8 @@ export function ActiveTag({
         className="active-tag__close-btn"
         aria-label={`Удалить фильтр ${children}`}
       >
+        {/* Атрибуты размеров убраны — теперь размеры задаются только в CSS через класс */}
         <svg 
-          width="14" 
-          height="14" 
           viewBox="0 0 24 24" 
           fill="none" 
           xmlns="http://w3.org"
@@ -35,6 +34,8 @@ export function ActiveTag({
             d="M3 21L21 3M3 3L21 21" 
             stroke="currentColor" 
             strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
       </Button>
