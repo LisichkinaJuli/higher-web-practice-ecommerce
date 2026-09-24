@@ -11,13 +11,58 @@
 @import "./components/ui/Button/Button.css";
 @import "./components/ui/ActiveTag/ActiveTag.css";
 @import "./components/ui/Pagination/Pagination.css";
+@import "./components/ui/Rating/Rating.css";
 
 /* Подключаем стили конкретных страниц каталога */
-@import "./pages/CatalogPage/components/SidebarDesktop.css"; /* Удален дубликат снизу */
+@import "./pages/CatalogPage/components/SidebarDesktop.css";
 @import "./pages/CatalogPage/CatalogPage.css";
+@import "./pages/CatalogPage/components/MobileFilters.css";
+@import "./pages/CatalogPage/components/MobileCategories.css";
+@import "./pages/CatalogPage/components/ProductCardDetail.css";
+@import "./pages/LoginPage/LoginPage.css";
+@import "./pages/ProfilePage/ProfilePage.css";
+@import "./pages/ProfilePage/ProfileEditPage.css";
+@import "./pages/CartPage/CartPage.css";
+@import "./pages/CheckoutPage/CheckoutPage.css";
+@import "./pages/SuccessOrderPage/SuccessOrderPage.css";
+@import "./pages/OrdersHistoryPage/OrdersHistoryPage.css";
+
+
+@import "./components/layout/BottomNav/BottomNav.css";
+@import "./components/layout/Header.css";
+@import "./components/layout/CabinetSidebar/CabinetSidebar.css";
+
 
 @theme {
   --size-container: 1180px;
+  --spacing: 0.25rem;
+
+  --spacing-0: 0px;
+  --spacing-px: 1px;
+  --spacing-0\.5: 0.125rem;
+  --spacing-1: 0.25rem;
+  --spacing-1\.5: 0.375rem;
+  --spacing-2: 0.5rem;
+  --spacing-2\.5: 0.625rem;
+  --spacing-3: 0.75rem;
+  --spacing-3\.5: 0.875rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
+  --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
+  --spacing-10: 2.5rem;
+  --spacing-11: 2.75rem;
+  --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-28: 7rem;
+  --spacing-32: 8rem;
+  --spacing-36: 9rem;
+  --spacing-40: 10rem;
   
   --color-accent-primary: #1e40af;
   --color-accent-secondary: #2563eb;
@@ -56,45 +101,6 @@
   
   --text-xs: 12px;
   --text-xs--line-height: 16px;
-}
-
-@theme {
-  @media (prefers-color-scheme: dark) {
-    &:root {
-      --color-accent-primary: #3b82f6;
-      --color-accent-secondary: #60a5fa;
-      --color-accent-success: #34d399;
-      --color-accent-danger: #f87171;
-
-      --color-neutral-primary: #e5e7eb;
-      --color-neutral-secondary: #9ca3af;
-      --color-neutral-disable: #6b7280;
-
-      --color-bg-primary: #111827;
-      --color-bg-secondary: #1f2937;
-      --color-bg-disable: #374151;
-      --color-bg-shadows: #1e2938;
-    }
-  }
-}
-
-/* Если вы переключаете тему вручную через класс .dark на теге html/body: */
-@custom-variant dark (&:where(.dark, .dark *));
-
-.dark {
-  --color-accent-primary: #3b82f6;
-  --color-accent-secondary: #60a5fa;
-  --color-accent-success: #34d399;
-  --color-accent-danger: #f87171;
-
-  --color-neutral-primary: #e5e7eb;
-  --color-neutral-secondary: #9ca3af;
-  --color-neutral-disable: #6b7280;
-
-  --color-bg-primary: #111827;
-  --color-bg-secondary: #1f2937;
-  --color-bg-disable: #374151;
-  --color-bg-shadows: #1e2938;
 }
 
 *,
@@ -174,27 +180,31 @@ a {
  text-decoration: none;
 }
 
-@utility main-layout {
+.main-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
   background-color: var(--color-bg-primary);
+}
 
-  & .main-layout__container {
-    display: flex;
-    flex-direction: column;
-    flex: 1 0 auto;
-    width: 100%;
-    max-width: var(--size-container);
-    margin: 0 auto;
-    padding: 0 16px;
-  }
+.main-layout__container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: var(--size-container);
+  margin: 0 auto;
+  padding: 0 16px;
+}
 
-  & .main-layout__content {
-    flex: 1 0 auto;
-    padding: 24px 0;
-  }
+.main-layout__content {
+  /* ТОЧЕЧНОЕ ДОБАВЛЕНИЕ: Включаем flex-контекст, чтобы .profile-page смог растянуться */
+  display: flex;
+  flex-direction: column;
+  
+  flex: 1 0 auto;
+  padding: 24px 0;
 }
 
 @utility header {
