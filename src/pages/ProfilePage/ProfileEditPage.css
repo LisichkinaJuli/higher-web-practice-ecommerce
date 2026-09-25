@@ -1,0 +1,103 @@
+.profile-edit-form {
+  background-color: #ffffff;
+  border: 1px solid var(--color-bg-shadows);
+  border-radius: 8px;
+  padding: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  width: 100%;
+  @media (width >= 768px) {
+    padding: var(--spacing-8);
+    max-width: 640px;
+  }
+}
+.profile-edit-form__avatar-section {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: var(--spacing-2);
+}
+.profile-edit-form__avatar-container {
+  position: relative;
+  width: var(--spacing-16);
+  height: var(--spacing-16);
+}
+.profile-edit-form__avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-bg-shadows);
+}
+.profile-edit-form__upload-btn {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: var(--spacing-6);
+  height: var(--spacing-6);
+  border-radius: 50%;
+  background-color: var(--color-accent-secondary);
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.15s ease;
+  &:hover {
+    background-color: var(--color-accent-primary);
+  }
+}
+.profile-edit-form__camera-icon {
+  width: 12px;
+  height: 12px;
+  color: #ffffff;
+}
+.profile-edit-form__global-error {
+  color: var(--color-accent-danger);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+.profile-edit-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
+  @media (width >= 640px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-5);
+  }
+}
+.profile-edit-form__input-name,
+.profile-edit-form__input-lastname {
+  width: 100%;
+}
+.profile-edit-form__input-email {
+  width: 100%;
+  @media (width >= 640px) {
+    grid-column: 1 / 2;
+  }
+}
+.profile-edit-form__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  width: 100%;
+  margin-top: var(--spacing-2);
+  @media (width >= 640px) {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--spacing-4);
+  }
+}
+.profile-edit-form__btn-cancel.btn,
+.profile-edit-form__btn-submit.btn {
+  width: 100%;
+  height: var(--spacing-10);
+  font-weight: 700;
+  @media (width >= 640px) {
+    width: auto;
+    padding: 0 var(--spacing-6);
+  }
+}
