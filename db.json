@@ -690,6 +690,45 @@
         "phone": "+79998887766"
       },
       "createdAt": "2026-03-09T14:20:00Z"
+    },
+    {
+      "id": "97ae5e43-8182-46a6-a123-9bb259ab20aa",
+      "number": "ЗАКАЗ-7574282365115",
+      "userId": "iIeDHSk",
+      "status": "paid",
+      "items": [
+        {
+          "productId": "3e6e9a7a-0a5f-4e2d-9b0a-2e8d6e4c1a01",
+          "name": "Председатель",
+          "price": 5590,
+          "quantity": 1,
+          "image": "/mustashes/chairman/0.png"
+        },
+        {
+          "productId": "6a1c2d3e-4f50-4a61-8b72-9c83ad94be02",
+          "name": "Джентльмен",
+          "price": 1790,
+          "quantity": 1,
+          "image": "/mustashes/gentelmen/0.png"
+        }
+      ],
+      "totalPrice": 7380,
+      "paymentMethod": "card_online",
+      "deliveryMethod": "courier",
+      "deliveryAddress": {
+        "country": "Россия",
+        "city": "Москва",
+        "street": "fg fgfg f gf gfg",
+        "house": "1"
+      },
+      "comment": "",
+      "customer": {
+        "firstName": "test",
+        "lastName": "Лисичкина",
+        "email": "test@gmail.com",
+        "phone": "55555555555"
+      },
+      "createdAt": "2026-09-25T09:44:50.123Z"
     }
   ],
   "ratings": [

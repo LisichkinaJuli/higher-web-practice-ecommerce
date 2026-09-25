@@ -1,24 +1,24 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGetProductsQuery } from "../../../api/baseApi";
-import { useGetRatingsByProductQuery } from "../../../api/ratingsApi";
+import { useGetRatingsByProductQuery, useAddRatingMutation } from "../../../api/ratingsApi";
+import { useAppDispatch } from "../../../hooks";
+import { addItem } from "../../../app/store/cartSlice";
 import { Button, Rating } from "../../../components/ui";
-import type { Product } from "../../../types/product";
+import { type Product } from "../../../types/product";
 import ArrowIcon from "../../../assets/Arrow.svg?react";
 import ShoppingBagIcon from "../../../assets/Shopping_bag.svg?react";
 import HeartIcon from "../../../assets/Heart.svg?react";
 
-interface ProductCardDetailProps {
+interface ProductCardDetailInternalProps {
   product: Product;
 }
 
-const ProductCardDetail = ({ product }: ProductCardDetailProps) => {
+const ProductCardDetailInternal = ({ product }: ProductCardDetailInternalProps) => {
+  const dispatch = useAppDispatch();
   const [activeImgIndex, setActiveImgIndex] = useState<number>(0);
 
-  const images =
-    Array.isArray(product.images) && product.images.length > 0
-      ? product.images
-      : [];
+  const images = Array.isArray(product.images) && product.images.length > 0 ? product.images : [];
 
   const handlePrevImage = () => {
     setActiveImgIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
@@ -28,10 +28,14 @@ const ProductCardDetail = ({ product }: ProductCardDetailProps) => {
     setActiveImgIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  const hasRating = typeof product.rating === "number" && product.rating > 0;
-  const displayRating = hasRating ? product.rating.toFixed(1) : "0.0";
-  const ratingCount =
-    typeof product.ratingCount === "number" ? product.ratingCount : 0;
+  const handleAddToCart = () => {
+    if (product.inStock) {
+      dispatch(addItem({ product, quantity: 1 }));
+    }
+  };
+
+  const displayRating = typeof product.rating === "number" && product.rating > 0 ? product.rating : 0;
+  const ratingCount = typeof product.ratingCount === "number" ? product.ratingCount : 0;
 
   return (
     <div className="product-page__layout">
@@ -73,9 +77,7 @@ const ProductCardDetail = ({ product }: ProductCardDetailProps) => {
             {images.map((imgUrl, idx) => {
               const thumbClasses = [
                 "product-page__thumb-btn",
-                idx === activeImgIndex
-                  ? "product-page__thumb-btn_state_active"
-                  : "",
+                idx === activeImgIndex ? "product-page__thumb-btn_state_active" : "",
               ]
                 .filter(Boolean)
                 .join(" ");
@@ -87,11 +89,7 @@ const ProductCardDetail = ({ product }: ProductCardDetailProps) => {
                   className={thumbClasses}
                   aria-label={`Открыть изображение ${idx + 1}`}
                 >
-                  <img
-                    src={imgUrl}
-                    alt=""
-                    className="product-page__thumb-img"
-                  />
+                  <img src={imgUrl} alt="" className="product-page__thumb-img" />
                 </Button>
               );
             })}
@@ -104,19 +102,15 @@ const ProductCardDetail = ({ product }: ProductCardDetailProps) => {
           <h1 className="product-page__title">{product.name}</h1>
           <div className="product-page__rating">
             <div className="product-page__rating-top">
-              <Rating value={hasRating ? 1 : 0} count={1} size="l" disabled />
-              <span>{displayRating}</span>
+              <Rating value={Math.round(displayRating)} count={5} size="l" disabled />
+              <span>{displayRating > 0 ? displayRating.toFixed(1) : "0.0"}</span>
             </div>
-            <span className="product-page__reviews-count">
-              {ratingCount} оценок
-            </span>
+            <span className="product-page__reviews-count">{ratingCount} оценок</span>
           </div>
         </div>
 
         <div className="product-page__price-row">
-          <div className="product-page__price">
-            {product.price.toLocaleString()} ₽
-          </div>
+          <div className="product-page__price">{product.price.toLocaleString()} ₽</div>
           <span className="product-page__stock-status product-page__stock-status_position_top">
             {product.inStock ? "Есть в наличии" : "Нет в наличии"}
           </span>
@@ -127,6 +121,8 @@ const ProductCardDetail = ({ product }: ProductCardDetailProps) => {
             <Button
               variant="default"
               colorVariant="primary"
+              onClick={handleAddToCart}
+              disabled={!product.inStock}
               className="product-page__buy-btn"
               aria-label="Добавить усы в корзину"
             >
@@ -168,6 +164,8 @@ const ProductCardDetail = ({ product }: ProductCardDetailProps) => {
         <Button
           variant="default"
           colorVariant="primary"
+          onClick={handleAddToCart}
+          disabled={!product.inStock}
           className="product-page__mobile-buy-btn"
           aria-label="Добавить усы в корзину"
         >
@@ -177,68 +175,100 @@ const ProductCardDetail = ({ product }: ProductCardDetailProps) => {
     </div>
   );
 };
+interface OrderItemHistory {
+  productId: string;
+}
 
-export const ProductPage = () => {
+interface OrderHistory {
+  userId: string | null;
+  items: OrderItemHistory[];
+}
+
+export function ProductCardDetail() {
   const { id } = useParams<{ id: string }>();
 
-  const {
-    data: products,
-    isLoading: isProductsLoading,
-    error: productsError,
-  } = useGetProductsQuery();
-  const { data: reviews, isLoading: isReviewsLoading } =
-    useGetRatingsByProductQuery(id ?? "", { skip: !id });
+  const { data: products, isLoading: isProductsLoading, error: productsError } = useGetProductsQuery();
+  const { data: reviews, isLoading: isReviewsLoading } = useGetRatingsByProductQuery(id ?? "", { skip: !id });
+  const [addRating, { isLoading: isRatingSubmitting }] = useAddRatingMutation();
 
   const [userRating, setUserRating] = useState<number>(0);
+  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
 
-  if (isProductsLoading || isReviewsLoading)
-    return (
-      <div className="catalog-page__loading">
-        Загрузка информации о товаре...
-      </div>
+  const savedUser = localStorage.getItem("quant_user");
+  const user = savedUser ? (JSON.parse(savedUser) as { id: string; firstName: string }) : null;
+  const isAuthorized = !!user?.id;
+
+  const savedHistoryRaw = localStorage.getItem("quant_orders_history");
+  let hasPurchased = false;
+  try {
+    const history = savedHistoryRaw ? (JSON.parse(savedHistoryRaw) as OrderHistory[]) : [];
+    hasPurchased = Array.isArray(history) && history.some((order) => 
+      order.userId === user?.id && order.items.some((item) => item.productId === id)
     );
-  if (productsError || !products)
-    return (
-      <div className="catalog-page__error">
-        Не удалось загрузить данные усов
-      </div>
-    );
+  } catch {
+    hasPurchased = false;
+  }
+
+  if (isProductsLoading || isReviewsLoading) {
+    return <div className="catalog-page__loading">Загрузка информации о товаре...</div>;
+  }
+
+  if (productsError || !products) {
+    return <div className="catalog-page__error">Не удалось загрузить данные усов</div>;
+  }
 
   const product = products.find((p) => p.id === id);
-  if (!product)
-    return (
-      <div className="catalog-page__empty">Товар не найден в каталоге</div>
-    );
+  if (!product) {
+    return <div className="catalog-page__empty">Товар не найден в каталоге</div>;
+  }
 
   const reviewList = reviews ?? [];
 
-  const formatReviewDate = (isoString: string) => {
-    return new Date(isoString).toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
+  const handleRatingSubmit = async () => {
+    if (userRating === 0 || isRatingSubmitting) return;
+
+    try {
+      await addRating({
+        productId: id ?? "",
+        userId: user?.id || "",
+        userName: user?.firstName || "Покупатель",
+        rating: userRating
+      }).unwrap();
+      setSubmitSuccess(true);
+      setUserRating(0);
+    } catch {
+      setSubmitSuccess(false);
+    }
   };
 
   return (
     <div className="product-page">
-      <ProductCardDetail product={product} />
+      <ProductCardDetailInternal product={product} />
 
       <div className="rating-comments-block">
         <div className="rating-comments-block__input-zone">
           <h3 className="rating-comments-block__input-title">Оцените усы</h3>
-          <Rating
-            value={userRating}
-            onChange={(val) => setUserRating(val)}
-            size="m"
-          />
-          <Button
-            variant="default"
-            colorVariant="secondary"
-            className="rating-comments-block__submit-btn"
-          >
-            Оценить
-          </Button>
+          
+          {!isAuthorized ? (
+            <p className="rating-comments-block__restriction-text">Оценивать товар могут только авторизованные пользователи.</p>
+          ) : !hasPurchased ? (
+            <p className="rating-comments-block__restriction-text">Оценка доступна только покупателям, которые приобрели данный товар.</p>
+          ) : submitSuccess ? (
+            <p className="rating-comments-block__success-text">Спасибо за вашу оценку!</p>
+          ) : (
+            <>
+              <Rating value={userRating} onChange={(val) => setUserRating(val)} size="m" />
+              <Button
+                variant="default"
+                colorVariant="secondary"
+                onClick={handleRatingSubmit}
+                disabled={userRating === 0 || isRatingSubmitting}
+                className="rating-comments-block__submit-btn"
+              >
+                {isRatingSubmitting ? "Сохранение..." : "Оценить"}
+              </Button>
+            </>
+          )}
         </div>
 
         {reviewList.length > 0 && (
@@ -246,17 +276,9 @@ export const ProductPage = () => {
             {reviewList.map((review) => (
               <div key={review.id} className="rating-comments-block__row">
                 <div className="rating-comments-block__author-meta">
+                  <span className="rating-comments-block__author-name">{review.userName || "Покупатель"}</span>
                   <Rating value={review.rating} size="s" disabled />
-                  <span className="rating-comments-block__score">
-                    {review.rating.toFixed(1)}
-                  </span>
-                  <span className="rating-comments-block__author-name">
-                    {review.userName}
-                  </span>
                 </div>
-                <span className="rating-comments-block__date">
-                  {formatReviewDate(review.createdAt)}
-                </span>
               </div>
             ))}
           </div>
@@ -264,4 +286,4 @@ export const ProductPage = () => {
       </div>
     </div>
   );
-};
+}

@@ -1,14 +1,14 @@
 import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useGetProductsQuery } from "../../api/baseApi";
 import {
   selectCartItems,
-  selectCartTotalPrice,
-  selectCartTotalCount,
   changeQuantity,
   removeFromCart,
 } from "../../app/store/cartSlice";
 import { Button } from "../../components/ui";
 import { CabinetSidebar } from "../../components/layout/CabinetSidebar/CabinetSidebar";
 import { useNavigate } from "react-router-dom";
+
 function TrashIcon({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -25,18 +25,39 @@ function TrashIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
+
 export function CartPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector(selectCartItems);
-  const totalPrice = useAppSelector(selectCartTotalPrice);
-  const totalCount = useAppSelector(selectCartTotalCount);
+
+  const { data: serverProducts = [], isLoading } = useGetProductsQuery();
+
+  const validatedCartItems = cartItems.map((item) => {
+    const freshProduct = serverProducts.find((p) => p.id === item.product.id);
+    return {
+      ...item,
+      product: freshProduct ? freshProduct : item.product,
+    };
+  });
+
+  const totalPrice = validatedCartItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0
+  );
+
+  const totalCount = validatedCartItems.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
+
   const formatItemsWord = (count: number) => {
     if (count % 10 === 1 && count % 100 !== 11) return `${count} товар`;
     if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100))
       return `${count} товара`;
     return `${count} товаров`;
   };
+
   const handleDecrease = (productId: string, currentQty: number) => {
     if (currentQty > 1) {
       dispatch(changeQuantity({ productId, quantity: currentQty - 1 }));
@@ -44,10 +65,23 @@ export function CartPage() {
       dispatch(removeFromCart(productId));
     }
   };
+
   const handleIncrease = (productId: string, currentQty: number) => {
     dispatch(changeQuantity({ productId, quantity: currentQty + 1 }));
   };
-  if (cartItems.length === 0) {
+
+  if (isLoading) {
+    return (
+      <div className="cart-page">
+        <CabinetSidebar />
+        <div className="cart-page__empty-container">
+          <p className="cart-page__empty-text">Загрузка корзины...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (validatedCartItems.length === 0) {
     return (
       <div className="cart-page cart-page_state_empty">
         <CabinetSidebar />
@@ -65,12 +99,11 @@ export function CartPage() {
       </div>
     );
   }
+
   return (
     <div className="cart-page">
-      {}
       <CabinetSidebar />
       <div className="cart-page__layout">
-        {}
         <main className="cart-page__main">
           <header className="cart-page__header">
             <h1 className="cart-page__title">Корзина</h1>
@@ -79,7 +112,7 @@ export function CartPage() {
             </span>
           </header>
           <div className="cart-page__list">
-            {cartItems.map(({ product, quantity }) => {
+            {validatedCartItems.map(({ product, quantity }) => {
               const mainImage =
                 Array.isArray(product.images) && product.images.length > 0
                   ? product.images[0]
@@ -97,12 +130,10 @@ export function CartPage() {
                   </div>
                   <div className="cart-item__info">
                     <h2 className="cart-item__name">{product.name}</h2>
-                    {}
                     <span className="cart-item__delivery-date lg:hidden">
-                      Доставят 30 февраля 2025 г.
+                      В ближайшие дни
                     </span>
                   </div>
-                  {}
                   <div className="cart-item__counter">
                     <Button
                       variant="default"
@@ -122,7 +153,6 @@ export function CartPage() {
                       +
                     </Button>
                   </div>
-                  {}
                   <div className="cart-item__price-zone">
                     <p className="cart-item__price">
                       {(product.price * quantity).toLocaleString("ru-RU")} ₽
@@ -141,7 +171,6 @@ export function CartPage() {
             })}
           </div>
         </main>
-        {}
         <aside className="cart-checkout">
           <div className="cart-checkout__card">
             <h2 className="cart-checkout__title hidden lg:block">
@@ -172,10 +201,7 @@ export function CartPage() {
               Оформить заказ
             </Button>
           </div>
-          {}
-          <div className="cart-checkout__decor-container hidden lg:block">
-            {}
-          </div>
+          <div className="cart-checkout__decor hidden lg:block" />
         </aside>
       </div>
     </div>
