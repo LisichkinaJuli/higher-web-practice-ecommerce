@@ -1,0 +1,30 @@
+.orders-history-page {
+  background-color: var(--color-bg-primary);
+  min-height: 100vh;
+  width: 100%;
+}
+
+.orders-history-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.orders-history__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  width: 100%;
+}
+
+.orders-history__card {
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-bg-shadows);
+  border-radius: 12px;
+  padding: var(--spacing-6);
+  transition: box-shadow 0.2s ease;
+}
+
+.orders-history__card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
