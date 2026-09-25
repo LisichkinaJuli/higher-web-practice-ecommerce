@@ -1,0 +1,101 @@
+@utility mobile-filters-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg-primary);
+  padding: 16px;
+  & .mobile-filters__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-left: 4px;
+  }
+  & .mobile-filters__title {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+    font-weight: 700;
+    color: var(--color-neutral-primary);
+    margin: 0;
+  }
+  & .mobile-filters__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 24px;
+  }
+  & .mobile-filters__card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid var(--color-bg-shadows);
+    box-shadow: 0px 4px 8px 0px var(--color-bg-shadows);
+  }
+  & .mobile-filters__card-title {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    font-weight: 700;
+    color: var(--color-neutral-primary);
+    margin: 0 0 16px 0;
+  }
+  & .mobile-filters__price-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+  }
+  & .mobile-filters__styles-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  & .mobile-filters__all-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  & .mobile-filters__styles-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  & .mobile-filters__tag-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    border: 1px solid transparent;
+    background-color: var(--color-bg-disable);
+    color: var(--color-neutral-primary);
+    height: auto;
+    &:hover:not(:disabled) {
+      background-color: var(--color-bg-shadows);
+    }
+  }
+  & .mobile-filters__tag-btn_state_active {
+    border: 1px solid var(--color-accent-secondary);
+    background-color: transparent;
+    color: var(--color-accent-secondary);
+    &:hover:not(:disabled) {
+      background-color: rgba(37, 99, 235, 0.05);
+    }
+  }
+  & .mobile-filters__arrow-right {
+    transform: scaleX(-1);
+  }
+  & .mobile-filters__toggles-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  & .mobile-filters__footer {
+    padding-bottom: 32px;
+  }
+  & .mobile-filters__btn-submit {
+    width: 100%;
+  }
+}
