@@ -1,30 +1,192 @@
-.orders-history-page {
-  background-color: var(--color-bg-primary);
-  min-height: 100vh;
+.orders-history-layout {
+  display: flex;
+  gap: var(--spacing-8);
   width: 100%;
 }
 
 .orders-history-container {
   width: 100%;
-  display: flex;
-  flex-direction: column;
+  flex-grow: 1;
 }
 
-.orders-history__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-4);
-  width: 100%;
+.orders-history-container__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-h1);
+  line-height: var(--text-h1--line-height);
+  font-weight: 700;
+  color: var(--color-neutral-primary);
+  text-align: left;
+  margin: 0 0 var(--spacing-6) 0;
 }
 
-.orders-history__card {
+.orders-history-container__empty-text {
+  font-family: var(--font-sans);
+  color: var(--color-neutral-secondary);
+}
+
+.orders-history-card {
   background-color: var(--color-bg-secondary);
   border: 1px solid var(--color-bg-shadows);
   border-radius: 12px;
   padding: var(--spacing-6);
-  transition: box-shadow 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: var(--spacing-4);
 }
 
-.orders-history__card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+.orders-history-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+}
+
+.orders-history-card__info-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.orders-history-card__title-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-2);
+}
+
+.orders-history-card__date {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-neutral-primary);
+}
+
+.orders-history-card__number {
+  font-size: var(--text-base);
+  color: var(--color-neutral-secondary);
+}
+
+.orders-history-card__status-row {
+  margin-top: var(--spacing-1);
+  font-size: var(--text-sm);
+}
+
+.orders-history-card__status {
+  font-weight: 600;
+  color: var(--color-accent-success);
+  margin-right: var(--spacing-2);
+}
+
+.orders-history-card__delivery-type {
+  color: var(--color-neutral-secondary);
+}
+
+.orders-history-card__meta-group {
+  text-align: right;
+}
+
+.orders-history-card__total {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-neutral-primary);
+}
+
+.orders-history-card__payment-method {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-disable);
+  margin-top: var(--spacing-0.5);
+}
+
+.orders-history-card__divider {
+  margin: var(--spacing-4) 0;
+  border-top: 1px solid var(--color-bg-shadows);
+}
+
+.orders-history-card__products-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.orders-history-product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.orders-history-product-item__main {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.orders-history-product-item__img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 6px;
+  background-color: var(--color-bg-disable);
+  flex-shrink: 0;
+}
+
+.orders-history-product-item__img-stub {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  background-color: var(--color-bg-disable);
+  flex-shrink: 0;
+}
+
+.orders-history-product-item__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.orders-history-product-item__name {
+  font-family: var(--font-sans);
+  color: var(--color-neutral-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.orders-history-product-item__name:hover {
+  color: var(--color-accent-secondary);
+}
+
+.orders-history-product-item__param {
+  font-size: var(--text-xs);
+  color: var(--color-neutral-disable);
+  margin-top: var(--spacing-0.5);
+}
+
+.orders-history-product-item__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.orders-history-product-item__price {
+  font-weight: 700;
+  color: var(--color-neutral-primary);
+}
+
+.orders-history-product-item__qty {
+  color: var(--color-neutral-secondary);
+  font-size: var(--text-sm);
+}
+
+.orders-history-card__actions {
+  text-align: center;
+}
+
+.orders-history-card__toggle-btn {
+  background: none;
+  border: none;
+  color: var(--color-accent-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.orders-history-card__toggle-btn:hover {
+  text-decoration: underline;
 }
