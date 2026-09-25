@@ -1,0 +1,35 @@
+@utility button-category {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-neutral-secondary);
+  background: transparent;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  height: 40px;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s ease;
+
+  &:hover:not(.button-category_active):not(:disabled) {
+    color: var(--color-accent-secondary);
+  }
+
+  &.button-category_active {
+    background-color: var(--color-bg-disable);
+    color: var(--color-neutral-primary);
+    cursor: default;
+  }
+
+  &:disabled {
+    color: var(--color-neutral-disable);
+    cursor: not-allowed;
+  }
+}

@@ -1,0 +1,63 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-content {
+  background-color: var(--color-bg-secondary);
+  width: 100%;
+  max-width: 540px;
+  border-radius: 16px;
+  padding: var(--spacing-8);
+  position: relative;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: var(--spacing-6);
+  right: var(--spacing-6);
+  background: none;
+  border: none;
+  color: var(--color-neutral-secondary);
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  color: var(--color-neutral-primary);
+}
+
+.modal-title {
+  font-size: var(--text-h2);
+  line-height: var(--text-h2--line-height);
+  margin-top: 0;
+  margin-bottom: var(--spacing-4);
+}
+
+.modal-body {
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  color: var(--color-neutral-secondary);
+  margin-bottom: var(--spacing-8);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-4);
+}
+
+.modal-actions .btn {
+  min-width: 140px;
+}
