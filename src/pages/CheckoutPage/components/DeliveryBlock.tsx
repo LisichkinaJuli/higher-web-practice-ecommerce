@@ -1,4 +1,5 @@
-import { type ChangeEvent } from "react";
+import { type ChangeEvent, useEffect } from "react";
+import { useGetPickupPointsQuery } from "../../../api/baseApi";
 import {
   Button,
   Input,
@@ -12,21 +13,6 @@ type CityValue = "msk" | "spb";
 const cityOptions: SelectOption<CityValue>[] = [
   { value: "msk", label: "Москва" },
   { value: "spb", label: "Санкт-Петербург" },
-];
-
-const pickupPointsMock = [
-  {
-    id: "5a6b7c8d-9e0f-4a1b-8c2d-3e4f5a9c8001",
-    name: "Пункт выдачи №1",
-    address: "Москва, Арбат 12",
-    workHours: "09:00 - 21:00",
-  },
-  {
-    id: "6b7c8d9e-0f1a-4b2c-8d3e-4f5a6b0d8002",
-    name: "Пункт выдачи №2",
-    address: "Москва, улица Ленина 45",
-    workHours: "10:00 - 22:00",
-  },
 ];
 
 interface DeliveryBlockProps {
@@ -52,6 +38,43 @@ export function DeliveryBlock({
   pickupIndex,
   onPickupIndexChange,
 }: DeliveryBlockProps) {
+  const { data: serverPickupPoints = [], isLoading } =
+    useGetPickupPointsQuery();
+
+  const filteredPoints = serverPickupPoints.filter((point) => {
+    if (city === "msk") return point.address.toLowerCase().includes("москва");
+    if (city === "spb")
+      return (
+        point.address.toLowerCase().includes("петербург") ||
+        point.address.toLowerCase().includes("спб")
+      );
+    return true;
+  });
+
+  useEffect(() => {
+    if (method === "pickup_point" && filteredPoints.length > 0) {
+      const activePoint = filteredPoints[pickupIndex] || filteredPoints[0];
+      if (activePoint && address !== activePoint.address) {
+        onAddressChange(activePoint.address);
+      }
+    }
+  }, [method, city, pickupIndex, filteredPoints, onAddressChange, address]);
+
+  const handlePointChange = (val: string) => {
+    const idx = filteredPoints.findIndex((p) => p.id === val);
+    if (idx !== -1) {
+      onPickupIndexChange(idx);
+      onAddressChange(filteredPoints[idx].address);
+    }
+  };
+
+  const pointOptions = filteredPoints.map((p) => ({
+    value: p.id,
+    label: p.name,
+  }));
+
+  const currentPoint = filteredPoints[pickupIndex] || filteredPoints[0];
+
   return (
     <fieldset className="checkout-block">
       <legend className="checkout-block__title">Способ доставки</legend>
@@ -75,26 +98,34 @@ export function DeliveryBlock({
       </div>
 
       <div className="checkout-block__delivery-content">
-        <span className="checkout-block__date-label">
-          Доставят 30 февраля 2025 г.
-        </span>
+        <span className="checkout-block__date-label">В ближайшие дни</span>
+
+        <div className="checkout-block__city-group">
+          <label className="checkout-block__field-label">Выберите город:</label>
+          <Select<CityValue>
+            options={cityOptions}
+            value={city}
+            onChange={(val) => {
+              onCityChange(val);
+              onPickupIndexChange(0);
+            }}
+          />
+        </div>
 
         {method === "courier" ? (
           <div className="checkout-delivery-courier__fields">
-            <div className="checkout-delivery-courier__select-group">
+            <div className="checkout-delivery-courier__input-group flex-grow w-full">
               <label className="checkout-block__field-label">
                 Доставить по адресу:
               </label>
-              <Select<CityValue>
-                options={cityOptions}
-                value={city}
-                onChange={onCityChange}
-              />
-            </div>
-            <div className="checkout-delivery-courier__input-group flex-grow w-full">
               <Input
                 placeholder="улица, дом, квартира"
-                value={address}
+                value={
+                  address.toLowerCase().includes("арбат") ||
+                  address.toLowerCase().includes("проспект")
+                    ? ""
+                    : address
+                }
                 error={addressError}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   onAddressChange(e.target.value)
@@ -104,24 +135,38 @@ export function DeliveryBlock({
           </div>
         ) : (
           <div className="checkout-delivery-pickup__info-row">
-            <Button
-              type="button"
-              variant="default"
-              colorVariant="secondary"
-              onClick={() => onPickupIndexChange(pickupIndex === 0 ? 1 : 0)}
-              className="checkout-delivery-pickup__map-btn"
-            >
-              Выбрать на карте
-            </Button>
-            <div className="checkout-delivery-pickup__meta">
-              <p className="checkout-delivery-pickup__address">
-                {pickupPointsMock[pickupIndex].name} —{" "}
-                {pickupPointsMock[pickupIndex].address}
-              </p>
-              <span className="checkout-delivery-pickup__hours">
-                время работы: {pickupPointsMock[pickupIndex].workHours}
-              </span>
-            </div>
+            {isLoading ? (
+              <div className="checkout-delivery-pickup__loading">
+                Загрузка пунктов выдачи...
+              </div>
+            ) : filteredPoints.length > 0 ? (
+              <>
+                <div className="checkout-delivery-pickup__select-wrapper">
+                  <label className="checkout-block__field-label">
+                    Выберите пункт самовывоза:
+                  </label>
+                  <Select
+                    options={pointOptions}
+                    value={currentPoint?.id || ""}
+                    onChange={handlePointChange}
+                  />
+                </div>
+                {currentPoint && (
+                  <div className="checkout-delivery-pickup__meta">
+                    <p className="checkout-delivery-pickup__address">
+                      {currentPoint.name} — {currentPoint.address}
+                    </p>
+                    <span className="checkout-delivery-pickup__hours">
+                      время работы: 09:00 - 21:00
+                    </span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="checkout-delivery-pickup__error">
+                В данном городе нет доступных пунктов выдачи
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -298,3 +298,42 @@
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.checkout-block__city-group {
+  margin-bottom: var(--spacing-4);
+}
+
+.checkout-delivery-pickup__info-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.checkout-delivery-pickup__loading {
+  font-family: var(--font-sans);
+  color: var(--color-neutral-secondary);
+}
+
+.checkout-delivery-pickup__select-wrapper {
+  width: 100%;
+}
+
+.checkout-delivery-pickup__meta {
+  padding: 0 var(--spacing-3);
+}
+
+.checkout-delivery-pickup__address {
+  font-weight: 600;
+  color: var(--color-neutral-primary);
+  margin: 0 0 var(--spacing-1) 0;
+}
+
+.checkout-delivery-pickup__hours {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-secondary);
+}
+
+.checkout-delivery-pickup__error {
+  padding: 0 var(--spacing-3);
+  color: var(--color-accent-danger);
+  font-weight: 500;
+}
