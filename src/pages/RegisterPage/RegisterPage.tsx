@@ -1,28 +1,34 @@
 import { useState, type SyntheticEvent, type ChangeEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Button, Input } from '../../components/ui/';
+import { Button, Input } from '../../components/ui';
 import { useSignUpMutation } from '../../api/authApi';
+import { validateEmail, validatePassword } from '../../utils/validation';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { SerializedError } from '@reduxjs/toolkit';
 import runnerImgUrl from '../../assets/runner.png';
 import arrowLeftIconUrl from '../../assets/Arrow.svg';
+
 interface CustomErrorData {
   data?: string;
 }
+
 export function RegisterPage() {
   const navigate = useNavigate();
   const [signUp, { isLoading: isServerLoading }] = useSignUpMutation();
+
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+
   const [firstNameError, setFirstNameError] = useState<string>('');
   const [lastNameError, setLastNameError] = useState<string>('');
   const [emailError, setEmailError] = useState<string>('');
   const [passwordError, setPasswordError] = useState<string>('');
   const [confirmPasswordError, setConfirmPasswordError] = useState<string>('');
   const [globalError, setGlobalError] = useState<string>('');
+
   const validateForm = (): boolean => {
     let isValid = true;
     setFirstNameError('');
@@ -31,28 +37,29 @@ export function RegisterPage() {
     setPasswordError('');
     setConfirmPasswordError('');
     setGlobalError('');
+
     if (!firstName.trim()) {
       setFirstNameError('Введите имя');
       isValid = false;
     }
+
     if (!lastName.trim()) {
       setLastNameError('Введите фамилию');
       isValid = false;
     }
-    if (!email.trim()) {
-      setEmailError('Введите email');
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError('Введите корректный email');
-      isValid = false;
-    }
-    if (!password) {
-      setPasswordError('Введите пароль');
-      isValid = false;
-    } else if (password.length < 6) {
-      setPasswordError('Минимум 6 символов');
+
+    const emailCheck = validateEmail(email);
+    if (!emailCheck.isValid) {
+      setEmailError(emailCheck.error);
       isValid = false;
     }
+
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.isValid) {
+      setPasswordError(passwordCheck.error);
+      isValid = false;
+    }
+
     if (!confirmPassword) {
       setConfirmPasswordError('Повторите пароль');
       isValid = false;
@@ -60,8 +67,10 @@ export function RegisterPage() {
       setConfirmPasswordError('Пароли не совпадают');
       isValid = false;
     }
+
     return isValid;
   };
+
   const handleRegisterSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     if (!validateForm()) {
@@ -86,18 +95,7 @@ export function RegisterPage() {
           setGlobalError(customData?.data || 'Ошибка регистрации. Проверьте данные.');
         }
       } else {
-        setGlobalError('Не удалось подключиться к серверу. Сессия создана локально.');
-        const localBackupUser = {
-          id: crypto.randomUUID(),
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim(),
-          language: 'ru',
-          notifyByEmail: false,
-          createdAt: new Date().toISOString()
-        };
-        localStorage.setItem('quant_user', JSON.stringify(localBackupUser));
-        navigate('/profile');
+        setGlobalError('Не удалось подключиться к серверу. Пожалуйста, проверьте интернет-соединение.');
       }
     }
   };
@@ -127,16 +125,17 @@ export function RegisterPage() {
           <h1 className="text-xl md:text-2xl font-bold text-neutral-primary hidden md:block tracking-wide">
             Регистрация
           </h1>
-          {}
+          
           {globalError && (
-            <div style={{ color: 'var(--color-accent-danger, #ef4444)', fontSize: 'var(--text-sm)', fontWeight: 500, textAlign: 'center' }}>
+            <div className="register-page__global-error">
               {globalError}
             </div>
           )}
+
           <form onSubmit={handleRegisterSubmit} noValidate className="flex flex-col gap-4 w-full">
             <Input
               type="text"
-              label="Имя"
+              label="Имя *"
               placeholder="Ярополк"
               value={firstName}
               error={firstNameError}
@@ -144,13 +143,13 @@ export function RegisterPage() {
               autoComplete="given-name"
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setFirstName(e.target.value);
-                setFirstNameError('');
+                if (firstNameError) setFirstNameError('');
               }}
               className="w-full"
             />
             <Input
               type="text"
-              label="Фамилия"
+              label="Фамилия *"
               placeholder="Иванов"
               value={lastName}
               error={lastNameError}
@@ -158,13 +157,13 @@ export function RegisterPage() {
               autoComplete="family-name"
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setLastName(e.target.value);
-                setLastNameError('');
+                if (lastNameError) setLastNameError('');
               }}
               className="w-full"
             />
             <Input
               type="email"
-              label="Email"
+              label="Email *"
               placeholder="ivanov@yandex.ru"
               value={email}
               error={emailError}
@@ -172,13 +171,13 @@ export function RegisterPage() {
               autoComplete="email"
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setEmail(e.target.value);
-                setEmailError('');
+                if (emailError) setEmailError('');
               }}
               className="w-full"
             />
             <Input
               type="password"
-              label="Придумайте пароль"
+              label="Придумайте пароль *"
               placeholder="••••••"
               value={password}
               error={passwordError}
@@ -186,13 +185,13 @@ export function RegisterPage() {
               autoComplete="new-password"
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setPassword(e.target.value);
-                setPasswordError('');
+                if (passwordError) setPasswordError('');
               }}
               className="w-full"
             />
             <Input
               type="password"
-              label="Повторите пароль"
+              label="Повторите пароль *"
               placeholder="••••••"
               value={confirmPassword}
               error={confirmPasswordError}
@@ -200,7 +199,7 @@ export function RegisterPage() {
               autoComplete="new-password"
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setConfirmPassword(e.target.value);
-                setConfirmPasswordError('');
+                if (confirmPasswordError) setConfirmPasswordError('');
               }}
               className="w-full"
             />
@@ -214,13 +213,10 @@ export function RegisterPage() {
               {isServerLoading ? 'Регистрация...' : 'Зарегистрироваться'}
             </Button>
           </form>
-          <p className="text-xs md:text-sm text-neutral-secondary font-medium mt-1 flex flex-col md:flex-row md:items-center gap-1">
-            <span>Уже зарегистрированы?</span>
-            <Link
-              to="/login"
-              className="text-accent-primary hover:text-accent-secondary font-bold transition-colors outline-none focus-visible:underline mt-0.5 md:mt-0"
-            >
-              Войти в аккаунт
+          <p className="login-page__footer-text" style={{ textAlign: 'center', fontSize: '14px', marginTop: '8px' }}>
+            <span>Уже есть аккаунт? </span>
+            <Link to="/login" style={{ color: 'var(--color-accent-secondary)', textDecoration: 'none', fontWeight: 500 }}>
+              Войти
             </Link>
           </p>
         </div>
