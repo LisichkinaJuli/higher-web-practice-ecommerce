@@ -1,0 +1,14 @@
+.cabinet-sidebar {
+  display: none;
+  width: 100%;
+  background-color: transparent;
+  flex-shrink: 0;
+  @media (width >= 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    width: 224px;
+    border-right: 1px solid var(--color-bg-shadows);
+    padding-right: var(--spacing-4);
+  }
+}
