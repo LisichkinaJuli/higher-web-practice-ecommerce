@@ -26,3 +26,4 @@ export type {
 } from './order';
 
 export type { CartItem, Cart, AddToCartPayload } from './cart';
+export type { ModalProps } from './modal';

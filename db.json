@@ -21,6 +21,22 @@
       "language": "ru",
       "notifyByEmail": false,
       "createdAt": "2026-03-02T10:00:00Z"
+    },
+    {
+      "firstName": "lis",
+      "lastName": "lis",
+      "email": "julilisichkina@yandex.ru",
+      "password": "123456",
+      "createdAt": "2026-09-24T19:35:08.941Z",
+      "id": "HSV47XI"
+    },
+    {
+      "firstName": "test",
+      "lastName": "Лисичкина",
+      "email": "test@gmail.com",
+      "password": "123456",
+      "createdAt": "2026-09-25T01:39:19.302Z",
+      "id": "iIeDHSk"
     }
   ],
   "products": [

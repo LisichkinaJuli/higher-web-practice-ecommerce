@@ -1,14 +1,24 @@
+
 export type Product = {
   id: string;
   name: string;
   description: string;
   price: number;
   images: string[];
-  characteristics: Record<string, string>;
   inStock: boolean;
   rating: number; // 1–5
   ratingCount: number;
-  createdAt: string;
+  createdAt: string;  
+  characteristics: {
+    категория?: string;
+    подкатегория?: string;
+    стиль?: string;
+    форма?: string;
+    густота?: string;
+    закрученность?: string;
+    харизма?: string;
+    [key: string]: string | undefined;
+  };
 };
 
 export type ProductListResponse = {
