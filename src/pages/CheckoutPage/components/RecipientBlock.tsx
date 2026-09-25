@@ -30,7 +30,7 @@ export function RecipientBlock({
         
         <div className="checkout-recipient__fields">
           <Input
-            label="Номер телефона"
+            label="Номер телефона *"
             placeholder="+79991234567"
             value={phone}
             error={phoneError}
